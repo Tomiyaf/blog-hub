@@ -95,6 +95,9 @@ export default function SideBar({
                             const maskedName = isAuthenticated
                                 ? user.name
                                 : "Penulis Anonim";
+                            const initial = user.name
+                                ? user.name.charAt(0).toUpperCase()
+                                : "?";
 
                             return (
                             <Link
@@ -115,13 +118,16 @@ export default function SideBar({
                                                 onError={(e) => {
                                                     e.target.style.display =
                                                         "none";
-                                                    e.target.nextElementSibling.style.display =
-                                                        "flex";
+                                                    const fallback =
+                                                        e.target.nextElementSibling;
+                                                    if (fallback) {
+                                                        fallback.style.display = "flex";
+                                                    }
                                                 }}
                                             />
                                         ) : null}
                                         <div
-                                            className="flex items-center justify-center w-full h-full text-white rounded-full"
+                                            className="flex items-center justify-center w-full h-full"
                                             style={{
                                                 display: showAvatarImage
                                                     ? "none"
@@ -133,7 +139,7 @@ export default function SideBar({
                                         >
                                             <img
                                                 src="/person-svgrepo-com.svg"
-                                                alt="Anonymous"
+                                                alt="Penulis Anonim"
                                                 className="object-contain w-full h-full"
                                             />
                                         </div>

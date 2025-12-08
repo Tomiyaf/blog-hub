@@ -10,6 +10,14 @@ export default function BlogCard({ blog, isAuthenticated = false }) {
         });
     };
 
+    const maskedName = isAuthenticated
+        ? blog.user?.name || "Anonymous"
+        : "Penulis Anonim";
+    const authorAvatarUrl = blog.user?.avatar_url
+        ? `/storage/${blog.user.avatar_url}`
+        : null;
+    const showAvatarImage = isAuthenticated && authorAvatarUrl;
+
     return (
         <Link href={`/blog/${blog.id}`} className="block h-full">
             <div className="flex flex-col w-full h-full transition-shadow duration-300 border border-gray-200 shadow-sm card bg-base-100 hover:shadow-md">
@@ -42,27 +50,42 @@ export default function BlogCard({ blog, isAuthenticated = false }) {
                     {/* Author & Date */}
                     <div className="flex items-center gap-3 mt-2 text-sm text-base-content/70">
                         <div className="avatar">
-                            <div className="flex items-center justify-center w-10 h-10 overflow-hidden text-white rounded-full">
-                                {isAuthenticated && blog.user?.name ? (
-                                    <span className="text-sm font-semibold">
-                                        {blog.user.name
-                                            .charAt(0)
-                                            .toUpperCase()}
-                                    </span>
-                                ) : (
+                            <div className="w-10 h-10 rounded-full ring ring-gray-200 ring-offset-1">
+                                {showAvatarImage ? (
+                                    <img
+                                        src={authorAvatarUrl}
+                                        alt={maskedName}
+                                        className="object-cover w-full h-full rounded-full"
+                                        onError={(e) => {
+                                            e.target.style.display = "none";
+                                            const fallback =
+                                                e.target.nextElementSibling;
+                                            if (fallback) {
+                                                fallback.style.display = "flex";
+                                            }
+                                        }}
+                                    />
+                                ) : null}
+                                <div
+                                    className="flex items-center justify-center w-full h-full"
+                                    style={{
+                                        display: showAvatarImage
+                                            ? "none"
+                                            : "flex",
+                                        padding: showAvatarImage ? 0 : 6,
+                                    }}
+                                >
                                     <img
                                         src="/person-svgrepo-com.svg"
                                         alt="Anonymous"
-                                        className="object-contain w-full h-full p-1"
+                                        className="object-contain w-full h-full"
                                     />
-                                )}
+                                </div>
                             </div>
                         </div>
                         <div className="flex flex-col">
                             <p className="font-medium text-center text-base-content">
-                                {isAuthenticated
-                                    ? blog.user?.name || "Anonymous"
-                                    : "Penulis Anonim"}
+                                {maskedName}
                             </p>
                             <p className="text-xs text-center">
                                 {formatDate(blog.created_at)}
